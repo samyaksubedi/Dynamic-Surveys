@@ -121,6 +121,18 @@ NEXT_PUBLIC_SITE_URL=http://localhost:5173
 
 For deployment, both values must use real HTTPS origins. The API's `CLIENT_URL`, CORS, cookie security, and optional cookie domain must be configured for that frontend origin.
 
+### Vercel frontend deployment
+
+Import the repository in Vercel and set the **Root Directory** to `client`. Vercel will run the Vite build and publish `dist`. The client `vercel.json` rewrites all unknown paths to `index.html`, which is required for React Router routes such as `/auth/verify/:token`, `/s/:surveyId`, and `/surveys/:surveyId` to work on direct visits or refreshes.
+
+Set this Vercel environment variable before deploying:
+
+```text
+VITE_API_URL=https://your-public-api.example.com
+```
+
+Then set the deployed frontend origin as `CLIENT_URL` in the API environment and deploy the API separately. A Vercel static frontend cannot call `http://localhost:3000` after deployment.
+
 ## Database and migrations
 
 The committed initial migration creates:

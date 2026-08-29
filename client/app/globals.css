@@ -109,6 +109,16 @@ button,a { -webkit-tap-highlight-color:transparent; }
 .auth-success { min-height:330px; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:13px; }
 .auth-success>svg { color:var(--accent); }
 .auth-success .button { margin-top:12px; }
+.verification-page { min-height:100vh; padding:30px; background:var(--paper); display:grid; grid-template-rows:auto 1fr; }
+.verification-page>.brand { justify-self:start; }
+.verification-card { width:min(500px,100%); margin:auto; padding:58px; border:1px solid var(--line-strong); background:var(--surface); box-shadow:0 30px 70px rgba(35,39,35,.09); text-align:center; }
+.verification-card h1 { margin:12px 0; font-size:clamp(32px,5vw,42px); line-height:1; letter-spacing:-.052em; }
+.verification-card>p:not(.section-kicker) { max-width:340px; margin:0 auto 27px; color:var(--muted); font-size:13px; line-height:1.65; }
+.verification-card .section-kicker { margin-top:0; }
+.verification-icon { width:55px; height:55px; margin:0 auto 23px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; }
+.verification-icon.loading { background:#efefe9; color:var(--muted); }
+.verification-icon.success { background:#e5f4eb; color:#317455; }
+.verification-icon.error { background:#fff0ed; color:#a13b3b; }
 
 /* App shell */
 .app-layout { min-height:100vh; display:grid; grid-template-columns:236px minmax(0,1fr); }
@@ -406,6 +416,8 @@ button,a { -webkit-tap-highlight-color:transparent; }
   .auth-header { width:calc(100% - 30px); }
   .auth-grid { width:calc(100% - 30px); }
   .auth-card { padding:26px 20px; }
+  .verification-page { padding:20px; }
+  .verification-card { padding:42px 24px; }
   .danger-zone { align-items:flex-start; flex-direction:column; }
   .danger-zone>div:last-child { width:100%; flex-direction:column; }
   .toast-stack { left:12px; right:12px; }

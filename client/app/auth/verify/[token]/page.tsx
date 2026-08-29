@@ -1,23 +1,45 @@
-'use client';
-
-import { CheckCircle2, CircleAlert } from 'lucide-react';
+import { CheckCircle2, CircleAlert, LoaderCircle } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Brand } from '@/components/brand';
 import { apiRequest, ApiRequestError } from '@/lib/api';
 
 export default function VerifyPage() {
   const params = useParams<{ token: string }>();
-  const [state, setState] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('Verifying your email address…');
+  const [state, setState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('Verify your email to unlock your survey workspace.');
 
-  useEffect(() => {
-    void apiRequest(`/api/v1/auth/verify/${params.token ?? ''}`, {}, { auth: false })
-      .then(() => { setState('success'); setMessage('Your email is verified. You can now sign in and start building.'); })
-      .catch((error: unknown) => { setState('error'); setMessage(error instanceof ApiRequestError ? error.message : 'This verification link could not be used.'); });
-  }, [params.token]);
+  const verify = async () => {
+    if (!params.token || state === 'loading' || state === 'success') return;
+    setState('loading');
+    try {
+      const response = await apiRequest(`/api/v1/auth/verify/${params.token}`, {}, { auth: false });
+      setState('success');
+      setMessage(response.message);
+    } catch (error: unknown) {
+      setState('error');
+      setMessage(error instanceof ApiRequestError ? error.message : 'This verification link could not be used.');
+    }
+  };
 
   return (
-    <main className="centered-state"><Brand /><div className="state-card">{state === 'loading' && <span className="state-spinner" />}{state === 'success' && <CheckCircle2 size={32} />}{state === 'error' && <CircleAlert size={32} />}<h1>{state === 'loading' ? 'One moment' : state === 'success' ? 'Email verified' : 'Verification failed'}</h1><p>{message}</p>{state !== 'loading' && <Link to="/sign-in" className="button button-dark">Continue to sign in</Link>}</div></main>
+    <main className="verification-page">
+      <Brand />
+      <section className="verification-card" aria-live="polite">
+        <span className={`verification-icon ${state}`}>
+          {state === 'loading' ? <LoaderCircle className="spin" size={27} /> : state === 'error' ? <CircleAlert size={27} /> : <CheckCircle2 size={27} />}
+        </span>
+        <p className="section-kicker">Email verification</p>
+        <h1>{state === 'success' ? 'You’re verified.' : state === 'error' ? 'This link needs attention.' : 'Confirm your account.'}</h1>
+        <p>{message}</p>
+        {state === 'success' ? (
+          <Link to="/sign-in" className="button button-dark">Continue to sign in</Link>
+        ) : (
+          <button type="button" className="button button-accent" onClick={() => void verify()} disabled={state === 'loading' || !params.token}>
+            {state === 'loading' ? <><LoaderCircle className="spin" size={16} /> Verifying…</> : 'Verify email'}
+          </button>
+        )}
+      </section>
+    </main>
   );
 }
