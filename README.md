@@ -62,7 +62,7 @@ Dynamic-Surveys/
     └── tests/                      # isolated unit and integration suites
 ```
 
-The organization follows the PhotoDey reference: versioned routers call thin controllers, services own business rules, repositories encapsulate routine persistence, Zod validates at the boundary, and a central `ApiError`/`ApiResponse` contract provides consistent JSON.
+The organization follows the PhotoDey(MY PREVIOUS PROJECT) reference: versioned routers call thin controllers, services own business rules, repositories encapsulate routine persistence, Zod validates at the boundary, and a central `ApiError`/`ApiResponse` contract provides consistent JSON.
 
 ## Local setup
 
