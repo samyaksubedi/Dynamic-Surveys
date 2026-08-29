@@ -1,0 +1,49 @@
+name: dynamic_surveys_services
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dynamic_surveys_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dynamic_surveys
+      POSTGRES_PASSWORD: dynamic_surveys_dev
+      POSTGRES_DB: dynamic_surveys_dev
+    ports:
+      - "5434:5432"
+    volumes:
+      - dynamic_surveys_postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U dynamic_surveys -d dynamic_surveys_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: dynamic_surveys_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass dynamic_surveys_redis_dev
+    ports:
+      - "6380:6379"
+    volumes:
+      - dynamic_surveys_redis_data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "--no-auth-warning",
+          "-a",
+          "dynamic_surveys_redis_dev",
+          "ping",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dynamic_surveys_postgres_data:
+  dynamic_surveys_redis_data:
